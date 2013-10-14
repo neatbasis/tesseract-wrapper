@@ -1,0 +1,40 @@
+#!/bin/sh
+# a wrapper for tesseract
+function helptext {
+ echo "Syntax:";
+ echo "$0 -i inputfile [-o outputfile] [-l lang]";
+}
+
+#INFILE=''
+#OUTFILE=''
+LANG='eng'
+while getopts ":i:o:l:" opt; do
+  case $opt in
+    i)
+      INFILE="$OPTARG"
+      ;;
+    o)
+      OUTFILE="$OPTARG"
+      ;;
+    l)
+      LANG="$OPTARG"
+      ;;
+    \?)
+      helptext >&2
+      exit 1
+      ;;
+  esac
+done
+TEMPFILE=$(mktemp --suffix=.txt);
+TEMPBASE=$(echo -n $TEMPFILE|sed -e 's/\.txt$//');
+
+if [[ -v INFILE &&  (! ( -v OUTFILE ) ) ]]; then
+  BASE=$(basename $INFILE| sed -e 's/\.[^\.]*$//');
+  OUTFILE="$BASE.txt"
+fi;
+
+if [[ -v INFILE  &&  -v OUTFILE ]]; then
+  tesseract $INFILE $TEMPBASE -l $LANG &&  mv $TEMPFILE $OUTFILE || rm -f $TEMPFILE
+else
+  helptext >&2
+fi;
