@@ -5,8 +5,6 @@ function helptext {
  echo "$0 -i inputfile [-o outputfile] [-l lang]";
 }
 
-#INFILE=''
-#OUTFILE=''
 LANG='eng'
 while getopts ":i:o:l:" opt; do
   case $opt in
